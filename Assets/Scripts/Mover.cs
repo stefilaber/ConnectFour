@@ -5,7 +5,7 @@ using UnityEngine;
 public class Mover : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 10f;
-    public Vector3 targetPosition;
+    public Vector3 targetLocation;
 
 
     // Start is called before the first frame update
@@ -18,6 +18,6 @@ public class Mover : MonoBehaviour
     void Update()
     {
         float step = moveSpeed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, step);
+        transform.position = Vector3.MoveTowards(transform.position, targetLocation, step);
     }
 }
