@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Board = ConnectFour.Board;
 
 public class GameManager : MonoBehaviour
 {
@@ -26,6 +27,7 @@ public class GameManager : MonoBehaviour
         isGameOver = false;
         Message.text = redMessage;
         Message.color = redColor;
+        myBoard = new Board();
     }
 
     // Start is called before the first frame update
@@ -39,16 +41,18 @@ public class GameManager : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0))
         {
-            Console.WriteLine("clicked");
             // Game over
             if (isGameOver)
             {
                 return;
             }
 
+            //Raycast2D
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
             RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
+
+
             if(hit.collider.CompareTag("Click"))
             {
                 Console.WriteLine("Hit");
@@ -64,45 +68,23 @@ public class GameManager : MonoBehaviour
                 hit.collider.gameObject.GetComponent<Column>().targetLocation.y += 1.222f;
 
                 //Update Board
-
+                myBoard.UpdateBoard(hit.collider.gameObject.GetComponent<Column>().col - 1, isPlayer);
+                if(myBoard.Result(isPlayer))
+                {
+                    Message.text = (isPlayer ? "Red" : "Yellow") + " Wins!";
+                    isGameOver = true;
+                    return;
+                }
                 //Change the Message
                 Message.text = isPlayer ? yellowMessage : redMessage;
                 Message.color = isPlayer ? yellowColor : redColor;
 
                 //Change the player
                 isPlayer = !isPlayer;
-
-
-                // if(hit.collider.gameObject.GetComponent<Column>().col < 7)
-                // {
-                //     if(isPlayer)
-                //     {
-                //         GameObject newRed = Instantiate(red, hit.collider.gameObject.GetComponent<Column>().spawnLocation, Quaternion.identity);
-                //         newRed.GetComponent<Red>().targetSpawnLocation = hit.collider.gameObject.GetComponent<Column>().targetSpawnLocation;
-                //         hit.collider.gameObject.GetComponent<Column>().col++;
-                //         isPlayer = false;
-                //         turnMessage.text = yellow;
-                //         turnMessage.color = yellowColor;
-                //     }
-                //     else
-                //     {
-                //         GameObject newYellow = Instantiate(yellow, hit.collider.gameObject.GetComponent<Column>().spawnLocation, Quaternion.identity);
-                //         newYellow.GetComponent<Yellow>().targetSpawnLocation = hit.collider.gameObject.GetComponent<Column>().targetSpawnLocation;
-                //         hit.collider.gameObject.GetComponent<Column>().col++;
-                //         isPlayer = true;
-                //         turnMessage.text = red;
-                //         turnMessage.color = redColor;
-                //     }
-                // }
             }
 
         }
     }
-
-    // public void GameStart()
-    // {
-    //     UnityEngine.SceneManagement.SceneManager.LoadScene(0);
-    // }
 
     public void GameQuit()
     {
